@@ -1,0 +1,25 @@
+.pio_version 0 // only requires PIO version 0
+.program st7789_lcd
+
+wait 1 pin 0
+wait 0 pin 0
+mov isr, null
+in pins, 4
+push block
+
+% c-sdk {
+    static inline void st7789_lcd_program_init(PIO pio, uint sm, uint offset) {
+        pio_sm_config config = st7789_lcd_program_get_default_config(offset);
+
+        // PIN Connections between Pico and Level-Shifter / GameBoy LCD Connector
+        // Signal	        GameBoy LCD Connector	        Pico
+        // GND	            Pin 21 (BLACK)                  GND (GND)
+        // Data 1	        Pin 16 (YELLOW)                 GP4 (4) (YELLOW)
+        // Data 0	        Pin 15 (BLUE)	                GP3 (3) (BLUE)
+        // Pixel Clock	    Pin 14 (WHITE)                  GP2 (2) (GREEN)
+        // Vertical Sync	Pin 12 (RED)                    GP5 (5) (RED)
+        sm_config_set_in_pins(&config, 2);
+        pio_sm_init(pio, sm, offset, &config);
+        pio_sm_set_enabled(pio, sm, true);
+    }
+%}
