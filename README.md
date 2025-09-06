@@ -10,7 +10,7 @@ This repository is about
 
 The techniques used in this repository are basically the same as outlined in the element14 present, hackster.io implementation by Andi West:
 https://www.hackster.io/news/making-a-game-boy-far-less-portable-93192b6b92b9
-The youtube video is here: https://www.youtube.com/watch?v=ypGMU5lLjeU&t=1s
+The youtube video is here: https://www.youtube.com/watch?v=ypGMU5lLjeU
 
 Also the main inspiration and source code comes from "What's Ken' Making"
 Video is here: https://www.youtube.com/watch?v=Q3DdKJIdbBk&t=573s
@@ -138,8 +138,55 @@ And Bada Bing Bada Boom the gameboy image will appear on the LCD!
 
 # Input Controls
 
-TODO
+This section is about getting input into the Gameboy DMG-01 using an external controller.
+
+First lets use an Arduino to send signals into the Gameboy.
+Here is an explanation of the way input works on the Gameboy: https://youtu.be/ypGMU5lLjeU?t=605
+
+## Pinout
+
+The pinout on the Gameboy DMG-01 ribbon cable connector is:
+Pin 1 is closest to the Gameboy's power switch. Pin 21 farthest away.
+
+* Pin 4 -- Left / B          	(Red)
+* Pin 5 -- Select "D-Pad"      	(Orange, Black)
+* Pin 6 -- Down / Start			(Yellow)
+* Pin 7 -- Up / Select			(Green)
+* Pin 8 -- Right / A			(Blue)
+* Pin 9 -- Select "Other"		(Purple, White)
+
+## Workings
+
+There are eight buttons on the Gameboy that a game can read. They are organized into two groups called "D-Pad" and "Others".
+
+* D-Pad: Left, Right, Up, Down
+* Others: A, B, Start, Select
+
+The Pins 4, 6, 7 and 8 are connected to both groups at the same time within the controller!
+One or more pins can be assertedd at the same time. Every button that is pressed asserts it's line.
+The lines are asserted active LOW! (TODO: this is my guess, I need to clarify).
+Means when a button is pressed, the line goes to GND.
+
+The Pins 4, 6, 7 and 8 are "in" pins seen from the perspective of the Gameboy's CPU. The game will read on those pins.
+This means that the Game has to tell the controller which group to activate so that the controller can present the
+button state for the activated group. This is how four pins are reused to accomodate eight buttons.
+
+The Pins 5 and 9 are "out" pins seen from the perspective of the Gameboy's CPU. The game will write to those pins.
+
+When the Game running on the Gameboy CPU wants to read the "D-Pad" group, it will pull PIN 5 (Select "D-Pad") LOW!
+When the Game running on the Gameboy CPU wants to read the "Others" group, A, B, Start, Select buttons, it will pull Pin 9 (Purple, White) LOW!
+
+Selecting none of the two groups by either setting Pins 5 and 9 both HIGH or LOW at the same time is a case
+that makes no sense from the input management perspective but happens in some games on purpose in order to reuse
+registers inside the CPU that are normally reserved for input processing! So this means in case both PINS 5 and 9
+are either pulled HIGH or LOW at the same time, the save thing to do is to set the input pins 4, 6, 7 and 8 to HIGH!
 
 # Upscaling and HDMI output
+
+TODO
+
+# Cartridge Simulation
+
+https://www.youtube.com/watch?v=ix5yZm4fwFQ
 
 TODO
