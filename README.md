@@ -143,6 +143,8 @@ This section is about getting input into the Gameboy DMG-01 using an external co
 First lets use an Arduino to send signals into the Gameboy.
 Here is an explanation of the way input works on the Gameboy: https://youtu.be/ypGMU5lLjeU?t=605
 
+Here is a project that also provides input to the gameboy: https://bitbuilt.net/forums/threads/consolized-gameboy-guide-wiring-a-nes-controller-to-a-dmg.2499/
+
 ## Pinout
 
 The pinout on the Gameboy DMG-01 ribbon cable connector is:
