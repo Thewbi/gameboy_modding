@@ -181,6 +181,50 @@ that makes no sense from the input management perspective but happens in some ga
 registers inside the CPU that are normally reserved for input processing! So this means in case both PINS 5 and 9
 are either pulled HIGH or LOW at the same time, the save thing to do is to set the input pins 4, 6, 7 and 8 to HIGH!
 
+Sample Code from https://youtu.be/ypGMU5lLjeU?t=680
+
+```
+// set GPIO input mode for input pins
+pinMode(BUTTONS_DPAD_PIN, INPUT);
+pinMode(BUTTONS_OTHER_PIN, INPUT);
+
+// set GPIO output mode for output pins
+pinMode(BUTTONS_RIGHT_A_PIN, OUTPUT);
+pinMode(BUTTONS_LEFT_B_PIN, OUTPUT);
+pinMode(BUTTONS_UP_SELECT_PIN, OUTPUT);
+pinMode(BUTTONS_DOWN_START_PIN, OUTPUT);
+
+while (true) {
+
+	uint dpad_selected_value = gpio_get(BUTTONS_DPAD_PIN);
+	uint other_selected_value = gpio_get(BUTTONS_OTHER_PIN);
+	
+	if (dpad_selected_value == 0) {
+	
+		gpio_put(BUTTONS_RIGHT_A_PIN, button_states[BUTTON_RIGHT]);
+		gpio_put(BUTTONS_LEFT_B_PIN, button_states[BUTTON_LEFT]);
+		gpio_put(BUTTONS_UP_SELECT_PIN, button_states[BUTTON_UP]);
+		gpio_put(BUTTONS_DOWN_START_PIN, button_states[BUTTON_DOWN]);
+		
+	} else if (other_selected_value == 0) {
+	
+		gpio_put(BUTTONS_RIGHT_A_PIN, button_states[BUTTON_A]);
+		gpio_put(BUTTONS_LEFT_B_PIN, button_states[BUTTON_B]);
+		gpio_put(BUTTONS_UP_SELECT_PIN, button_states[BUTTON_SELECT]);
+		gpio_put(BUTTONS_DOWN_START_PIN, button_states[BUTTON_START]);
+	
+	} else {
+
+		gpio_put(BUTTONS_RIGHT_A_PIN, 1);
+		gpio_put(BUTTONS_LEFT_B_PIN, 1);
+		gpio_put(BUTTONS_UP_SELECT_PIN, 1);
+		gpio_put(BUTTONS_DOWN_START_PIN, 1);
+
+	}
+	
+}
+```
+
 # Upscaling and HDMI output
 
 TODO
