@@ -142,7 +142,7 @@ And Bada Bing Bada Boom the gameboy image will appear on the LCD!
 This section is about getting input into the Gameboy DMG-01 using an external controller.
 
 HINT: I tried to provide input to the Gameboy DMG 01 using an Arduino UNO using code from 
-the Arduino IDE and using the API function (Not using assembler programming techniques!)
+the Arduino IDE and using the API functions (Not using assembler programming techniques!)
 The Arduino Code did not work! I was not able to provide input to the Gameboy. I did not 
 figure out why! Maybe the Pins cannot switch fast enough or the code is too slow without using
 assembler. I do not know. I switched over to an Raspberry Pi Pico wich was able to provide
@@ -176,15 +176,19 @@ There are eight buttons on the Gameboy that a game can read. They are organized 
 * Others: A, B, Start, Select
 
 The Pins 4, 6, 7 and 8 are connected to both groups at the same time within the controller!
-One or more pins can be assertedd at the same time. Every button that is pressed asserts it's line.
-The lines are asserted active LOW! (TODO: this is my guess, I need to clarify).
-Means when a button is pressed, the line goes to GND.
+One or more pins can be asserted at the same time. Every button that is pressed asserts it's line.
+The lines are asserted active LOW! Meaning when a button is pressed, the line goes to GND.
 
-The Pins 4, 6, 7 and 8 are "in" pins seen from the perspective of the Gameboy's CPU. The game will read on those pins.
-This means that the Game has to tell the controller which group to activate so that the controller can present the
-button state for the activated group. This is how four pins are reused to accomodate eight buttons.
+The Pins 4, 6, 7 and 8 are "in" pins seen from the perspective of the Gameboy's CPU. The game will read from those pins.
+This means that the game has to tell the controller which group to activate so that the controller can present the
+button state for the activated group and so that the game can then read that part of the controller's state.
+After the game has read the first half of the buttons, it will switch over and activate the second group.
+The controller will then provide the state of the other half of the buttons on the pins 4, 6, 7 and 8.
+The game will then read the second half.
+This is how four pins are reused to accomodate eight buttons.
 
-The Pins 5 and 9 are "out" pins seen from the perspective of the Gameboy's CPU. The game will write to those pins.
+The Pins 5 and 9 are "out" pins seen from the perspective of the Gameboy's CPU. The game will write to those pins
+in order to select the group.
 
 When the Game running on the Gameboy CPU wants to read the "D-Pad" group, it will pull PIN 5 (Select "D-Pad") LOW!
 When the Game running on the Gameboy CPU wants to read the "Others" group, A, B, Start, Select buttons, it will pull Pin 9 (Purple, White) LOW!
@@ -192,12 +196,15 @@ When the Game running on the Gameboy CPU wants to read the "Others" group, A, B,
 Selecting none of the two groups by either setting Pins 5 and 9 both HIGH or LOW at the same time is a case
 that makes no sense from the input management perspective but happens in some games on purpose in order to reuse
 registers inside the CPU that are normally reserved for input processing! So this means in case both PINS 5 and 9
-are either pulled HIGH or LOW at the same time, the save thing to do is to set the input pins 4, 6, 7 and 8 to HIGH!
+are either pulled HIGH or LOW at the same time, the save thing for the controller to do is to set the input pins 4, 6, 7 and 8 to HIGH!
 
 The pins are pulled LOW for 18 microseconds and 40 microseconds.
 Lets assume we want to sample every 10 microseconds.
 There are 10^6 = a million microsends in a second.
 This means we need to sample with 0.1 megahertz or 100 kHz = 100000 Hz.
+
+Again, something caused the Arduino UNO to not be able to act as a input provider for the GameBoy DMG-01.
+I strongly advise on using a Raspberry Pi Pico, an STM32 or even an FPGA instead!
 
 Sample Code: https://gist.github.com/uXeBoy/5e9ec52823b7d73a187370573bdbda1b
 
