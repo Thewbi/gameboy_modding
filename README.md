@@ -145,17 +145,19 @@ Here is an explanation of the way input works on the Gameboy: https://youtu.be/y
 
 Here is a project that also provides input to the gameboy: https://bitbuilt.net/forums/threads/consolized-gameboy-guide-wiring-a-nes-controller-to-a-dmg.2499/
 
+Here are the schematics: https://gbdev.gg8.se/wiki/articles/DMG_Schematics
+
 ## Pinout
 
 The pinout on the Gameboy DMG-01 ribbon cable connector is:
 Pin 1 is closest to the Gameboy's power switch. Pin 21 farthest away.
 
-* Pin 4 -- Left / B          	(Red)
-* Pin 5 -- Select "D-Pad"      	(Orange, Black)
-* Pin 6 -- Down / Start			(Yellow)
-* Pin 7 -- Up / Select			(Green)
-* Pin 8 -- Right / A			(Blue)
 * Pin 9 -- Select "Other"		(Purple, White)
+* Pin 8 -- Right / A			(Blue)
+* Pin 7 -- Up / Select			(Green)
+* Pin 6 -- Down / Start			(Yellow)
+* Pin 5 -- Select "D-Pad"      	(Orange, Black)
+* Pin 4 -- Left / B          	(Red)
 
 ## Workings
 
@@ -182,6 +184,13 @@ Selecting none of the two groups by either setting Pins 5 and 9 both HIGH or LOW
 that makes no sense from the input management perspective but happens in some games on purpose in order to reuse
 registers inside the CPU that are normally reserved for input processing! So this means in case both PINS 5 and 9
 are either pulled HIGH or LOW at the same time, the save thing to do is to set the input pins 4, 6, 7 and 8 to HIGH!
+
+The pins are pulled LOW for 18 microseconds and 40 microseconds.
+Lets assume we want to sample every 10 microseconds.
+There are 10^6 = a million microsends in a second.
+This means we need to sample with 0.1 megahertz or 100 kHz = 100000 Hz.
+
+Sample Code: https://gist.github.com/uXeBoy/5e9ec52823b7d73a187370573bdbda1b
 
 Sample Code from https://youtu.be/ypGMU5lLjeU?t=680
 
