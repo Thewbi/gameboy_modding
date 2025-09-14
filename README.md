@@ -37,7 +37,8 @@ Just imagine the Gameboy was connected to the Pico directly.
 
 The level shifter is a TXS0108E from TI. Here is an excellent video on how it works: https://www.youtube.com/watch?v=f7aySy_0URE
 The way I set up the system is that the Gameboy runs on batteries.
-An Arduino provides GND, 3v3 and 5V. 
+An Arduino provides GND, 3v3 and 5V and is not use to run any source code beside that.
+The Arduino is just used as a power supply and to provide GND.
 
 The TXS0108E has an A-side which inputs/outputs signals on the lower voltage (1.2V up to 3.6V).
 The B-side on the TXS0108E is for the higher voltage (1.7V up to 5.5V).
@@ -140,7 +141,15 @@ And Bada Bing Bada Boom the gameboy image will appear on the LCD!
 
 This section is about getting input into the Gameboy DMG-01 using an external controller.
 
-First lets use an Arduino to send signals into the Gameboy.
+HINT: I tried to provide input to the Gameboy DMG 01 using an Arduino UNO using code from 
+the Arduino IDE and using the API function (Not using assembler programming techniques!)
+The Arduino Code did not work! I was not able to provide input to the Gameboy. I did not 
+figure out why! Maybe the Pins cannot switch fast enough or the code is too slow without using
+assembler. I do not know. I switched over to an Raspberry Pi Pico wich was able to provide
+input even without the PIO feature! My hint is to not use an Arduino UNO but use a Raspberry
+Pi PICO (including a voltage level shifter!)
+
+First lets use an Raspberry Pi Pico (without connecting external controllers) to send signals into the Gameboy.
 Here is an explanation of the way input works on the Gameboy: https://youtu.be/ypGMU5lLjeU?t=605
 
 Here is a project that also provides input to the gameboy: https://bitbuilt.net/forums/threads/consolized-gameboy-guide-wiring-a-nes-controller-to-a-dmg.2499/
@@ -192,7 +201,7 @@ This means we need to sample with 0.1 megahertz or 100 kHz = 100000 Hz.
 
 Sample Code: https://gist.github.com/uXeBoy/5e9ec52823b7d73a187370573bdbda1b
 
-Sample Code from https://youtu.be/ypGMU5lLjeU?t=680
+Sample Code for the Raspberry Pi PICO from https://youtu.be/ypGMU5lLjeU?t=680
 
 ```
 // set GPIO input mode for input pins
