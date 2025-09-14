@@ -281,9 +281,13 @@ Next, include the multicore header file into your source code file.
 
 The idea is that the existing main function runs on core 0 and the user can start a second function 
 which is explicitly run on core1 using a call to multicore_launch_core1();
+multicore_launch_core1(); expects a function pointer as a parameter. It will execute the provided
+function on core1. The provided function typically contains an endless loop for the core1 to run
+indefinitely.
+
 The call to multicore_launch_core1() is the first thing that the main function will perform. 
-Once multicore_launch_core1() was called, main just continous as normal with the source code for
-core0.
+Once multicore_launch_core1() was called, main just continues as normal with the source code for
+core0. This means that core1 is kicked of by code running on core0.
 
 The code below will blink a LED in the function running on core1 in parallel with the main function
 which is run on core0 from main().
