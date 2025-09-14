@@ -245,6 +245,90 @@ while (true) {
 }
 ```
 
+## Explanation of the Source Code
+
+The Control input source code is stored in the GameBoyInput project (contained in the GameBoyInput subfolder of this repo).
+You can open the project using Visual Studio Code and the Raspberry Pi Pico extension.
+The Code is running on the Raspberry Pi Pico.
+
+The Raspberry Pi Pico has two cores.
+One core is used for consuming input from an NES controller and to store the input into an array.
+The second core is used to respond to the GameBoy polling for input. The response will provide the 
+input data that the first core has polled from the NES controller.
+
+The idea and design is credited to Andi West from Element14: https://www.hackster.io/news/making-a-game-boy-far-less-portable-93192b6b92b9
+
+In order to use both of the Raspberry Pi Pico's cores, edit the CMakeLists.xml file and add the multicore library to the build.
+
+```
+target_link_libraries(GameBoyInput
+        pico_stdlib
+        pico_multicore)
+```
+
+Next, include the multicore header file into your source code file.
+
+```
+#include "pico/multicore.h"
+```
+
+The idea is that the existing main function runs on core 0 and the user can start a second function 
+which is explicitly run on core1 using a call to multicore_launch_core1();
+The call to multicore_launch_core1() is the first thing that the main function will perform. 
+Once multicore_launch_core1() was called, main just continous as normal with the source code for
+core0.
+
+The code below will blink a LED in the function running on core1 in parallel with the main function
+which is run on core0 from main().
+
+```
+#include "pico/multicore.h"
+
+#ifndef LED_DELAY_MS
+#define LED_DELAY_MS 500
+#endif
+
+...
+
+void core1_main()
+{
+    gpio_init(PICO_DEFAULT_LED_PIN);
+    gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
+    while (true) {
+        gpio_put(PICO_DEFAULT_LED_PIN, true);
+        sleep_ms(LED_DELAY_MS);
+        gpio_put(PICO_DEFAULT_LED_PIN, false);
+        sleep_ms(LED_DELAY_MS);
+    }
+}
+
+int main()
+{
+    //stdio_init_all();
+
+    multicore_launch_core1(&core1_main);
+	
+	...
+```
+
+In the following I will call the functions running on each core a task function or just a task!
+
+A global variable can be read and written by both tasks!
+This can lead to hard to detect bugs and task synchronization is necessary to get the application 
+right.
+
+In our very specific example, there is a one-way relationship between the tasks.
+One of the task fills the button_states array with button states polled from the NES controller.
+The other task will read from the button_states array (but never read) to adapt the information
+to the format that the GambBoy understands.
+
+Since only one of the task writes the button_states array an the other task only reads and because
+we do not care about the overall quality of the data (best effort) there is really no need
+for any specific task synchronization.
+
+In more complex applications you need to take inter task communication very seriously!
+
+
 # Upscaling and HDMI output
 
 TODO
