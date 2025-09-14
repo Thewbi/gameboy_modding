@@ -330,14 +330,14 @@ right.
 
 In our very specific example, there is a one-way relationship between the tasks.
 One of the task fills the button_states array with button states polled from the NES controller.
-The other task will read from the button_states array (but never read) to adapt the information
-to the format that the GambBoy understands.
+The other task will read from the button_states array (but never write to it) to adapt the information
+to the format that the GameBoy understands.
 
 Since only one of the task writes the button_states array an the other task only reads and because
 we do not care about the overall quality of the data (best effort) there is really no need
 for any specific task synchronization.
 
-In more complex applications you need to take inter task communication very seriously!
+In more complex applications however, you need to take inter task communication very seriously!
 
 
 # Upscaling and HDMI output
